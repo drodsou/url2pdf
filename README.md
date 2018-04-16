@@ -1,7 +1,7 @@
 converts urls to pdf file
 
 
-# dist standalone executable requirements
+# dist standalone windows executable requirements
 
 'chrome.exe' must be in the PATH
 
@@ -19,15 +19,15 @@ url2pdf-win64 https://www.google.com
 or
 
 ```
-node url2pdf text-file-with-urls {"landscape":true}
+node url2pdf text-file-with-urls landscape A3
 ```
 
 # parameters
 
   1: url or tex-file-with-urls
   
-  2: JSON with page.pdf parameters. See:
-   https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
+  2,3...: [optional] landscape A3
+  See: https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
    
  
 

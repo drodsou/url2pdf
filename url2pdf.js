@@ -43,10 +43,18 @@ const path = require('path')
  
 
   // enter puppeteer, genearte pdf for each 'urls' element
+  let localChrome = './node_modules/puppeteer/.local-chromium/win64-549031/chrome-win32/chrome.exe'
+  let chromePath = 'chrome'   // Chrome needs to be en PATH
+  if (fs.existsSync(localChrome)) {
+    console.log('using local Chromium')
+    chromePath = localChrome
+  }
+  else {
+    console.log(`Using system's Chrome (must be in PATH)`)
+  }
+
   const browser = await puppeteer.launch( {
-    //executablePath: './node_modules/puppeteer/.local-chromium/win64-549031/chrome-win32/chrome.exe', // needed for pkg
-    //executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe', // needed for pkg
-    executablePath: 'chrome', // needs to be in PATH
+    executablePath: chromePath,   // pkg needs this
     headless: true
   } )
   var page
