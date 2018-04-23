@@ -1,6 +1,6 @@
 {
   "name": "url2pdf",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "converts urls to pdf files",
   "main": "url2pdf.js",
   "bin": "url2pdf.js",

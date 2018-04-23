@@ -55,6 +55,7 @@ const path = require('path')
 
   const browser = await puppeteer.launch( {
     executablePath: chromePath,   // pkg needs this
+    ignoreHTTPSErrors: true,    // ignore self-signed certificate errors
     headless: true
   } )
   var page
