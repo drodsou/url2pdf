@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 
-;(async ()=>{   // ; is important!
+async function main() {   // ; is important!
 
   // process url parameter
   let param = process.argv[2]
@@ -19,11 +19,20 @@ const path = require('path')
     landscape:false, 
     printBackground:true
   }
-  let paramOptions = process.argv.slice(3).map(e=>e.toLowerCase())
-  if (paramOptions.includes('landscape')) { pagePdfOptions.landscape = true }
-  if (paramOptions.includes('a3')) { pagePdfOptions.format = 'A3' }
 
-  console.log('page.pdf options:', pagePdfOptions)
+  let configPagePdfOptions = (arr)=>{
+    if (arr.includes('landscape')) { pagePdfOptions.landscape = true }
+    if (arr.includes('portrait')) { pagePdfOptions.landscape = false }
+    if (arr.includes('a3')) { pagePdfOptions.format = 'A3' }
+    if (arr.includes('a4')) { pagePdfOptions.format = 'A4' }
+    if (arr.includes('a5')) { pagePdfOptions.format = 'A5' }
+
+    console.log('page.pdf options:', pagePdfOptions)
+  }
+
+  let paramOptions = process.argv.slice(3).map(e=>e.toLowerCase())
+  configPagePdfOptions(paramOptions)
+  
 
   // build array of urls
   let outputDir
@@ -53,6 +62,7 @@ const path = require('path')
     console.log(`Using system's Chrome (must be in PATH)`)
   }
 
+
   const browser = await puppeteer.launch( {
     executablePath: chromePath,   // pkg needs this
     ignoreHTTPSErrors: true,    // ignore self-signed certificate errors
@@ -61,6 +71,14 @@ const path = require('path')
   var page
   //let url = 'http://localhost:3000/#printReport?nome=%22JORGE%22&apelidos=%22ALVAREZ%20SEVILLA%22&nif=%2252932334L%22&modulos=%5B%22%22%5D&titulo=%22Arquitectura%20sobre%20Amazon%20Web%20Services%20(AWS%20Solutions%20Architect%20Associate)%22&dataInicio=%2226%2F02%2F2018%22&dataFin=%2209%2F03%2F2018%22&horaInicio=%2216%3A30%22&horaFin=%2220%3A30%22&dataSinatura=%2226%20de%20febreiro%20de%202018%22&tipoEdicion=%22TIPED_2%22&codEdicion=%22XTIFCT1702%22&totalHorasPrograma=40&idActividadeFormativa=%22406102%22&temario=null&report=%22Diploma%22'
   for (let url of urls) {
+    // -- check if line is comment, with pdf options
+    // -- example valid directive: # landscape a3
+    if (url.startsWith('#')) {
+      let nextPdfParams = url.split(' ').map(e=>e.toLowerCase())
+      configPagePdfOptions(nextPdfParams)
+      continue // skip # line
+    }
+
     page = await browser.newPage()
     
     console.log('• pdfing', url)    
@@ -77,4 +95,19 @@ const path = require('path')
   }
   await browser.close()
 
-})()
+  await questionAsync('-- FINISHED. Press Enter')
+} // main
+
+main()
+
+// ------------------------ HELPERS
+
+function questionAsync(txt) {
+  return new Promise (resolve=>{
+    let rline = require('readline').createInterface({input: process.stdin, output: process.stdout })
+    rline.question( txt, (answer)=>{
+      rline.close();
+      resolve(answer)
+    })
+  })
+}
