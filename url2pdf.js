@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer')
+const puppeteer = require('puppeteer-core')
 const fs = require('fs')
 const path = require('path')
 
@@ -47,20 +47,26 @@ async function main() {   // ; is important!
     // asume parameter is path to a file
     outputDir = path.dirname(param) // the same folder of passed urls file
     let fileContents = fs.readFileSync(param, 'UTF8')
-    urls = fileContents.split('\n')
+    urls = fileContents.split('\n').map(r=>r.trim())
   }
  
 
-  // enter puppeteer, genearte pdf for each 'urls' element
-  let localChrome = './node_modules/puppeteer/.local-chromium/win64-549031/chrome-win32/chrome.exe'
+  // enter puppeteer, generate pdf for each 'urls' element
+
+  //let localChrome = './node_modules/puppeteer/.local-chromium/win64-672088/chrome-win/chrome.exe'
+
+  // let localChrome =  path.resolve(walkSync('./node_modules/puppeteer/.local-chromium')
+  //   .filter(e=>e.includes('chrome.exe'))[0]);
+
   let chromePath = 'chrome'   // Chrome needs to be en PATH
-  if (fs.existsSync(localChrome)) {
-    console.log('using local Chromium')
-    chromePath = localChrome
-  }
-  else {
-    console.log(`Using system's Chrome (must be in PATH)`)
-  }
+  // if (fs.existsSync(localChrome)) {
+  //   console.log('using local Chromium')
+  //   chromePath = localChrome
+  // }
+  // else {
+  //   console.log(`Using system's Chrome (must be in PATH)`)
+  // }
+  console.log(`Using system's Chrome (must be in PATH)`)
 
 
   const browser = await puppeteer.launch( {
@@ -68,7 +74,8 @@ async function main() {   // ; is important!
     ignoreHTTPSErrors: true,    // ignore self-signed certificate errors
     headless: true
   } )
-  var page
+  var page;
+  var firstTime= true;
   //let url = 'http://localhost:3000/#printReport?nome=%22JORGE%22&apelidos=%22ALVAREZ%20SEVILLA%22&nif=%2252932334L%22&modulos=%5B%22%22%5D&titulo=%22Arquitectura%20sobre%20Amazon%20Web%20Services%20(AWS%20Solutions%20Architect%20Associate)%22&dataInicio=%2226%2F02%2F2018%22&dataFin=%2209%2F03%2F2018%22&horaInicio=%2216%3A30%22&horaFin=%2220%3A30%22&dataSinatura=%2226%20de%20febreiro%20de%202018%22&tipoEdicion=%22TIPED_2%22&codEdicion=%22XTIFCT1702%22&totalHorasPrograma=40&idActividadeFormativa=%22406102%22&temario=null&report=%22Diploma%22'
   for (let url of urls) {
     // -- check if line is comment, with pdf options
@@ -84,6 +91,11 @@ async function main() {   // ; is important!
     console.log('• pdfing', url)    
     await page.goto(url, {waitUntil: 'networkidle2'})
     
+    if (firstTime) { 
+      firstTime = false; 
+      console.log('waiting for first page')
+      await new Promise(r=>setTimeout(r,5000)); 
+    }
     console.log('--- goto done')    
     let pageTitle = await page.title()
     pagePdfOptions.path = path.join(outputDir, pageTitle + '.pdf')
@@ -91,6 +103,7 @@ async function main() {   // ; is important!
     console.log('--- writing pdf:', pagePdfOptions.path)    
     await page.pdf(pagePdfOptions)
 
+    console.log('closing page');
     await page.close()
   }
   await browser.close()
@@ -110,4 +123,14 @@ function questionAsync(txt) {
       resolve(answer)
     })
   })
+}
+
+
+function walkSync (dir, filelist = []) {
+  fs.readdirSync(dir).forEach(file => {
+    filelist = fs.statSync(path.join(dir, file)).isDirectory()
+      ? walkSync(dir + '/' + file, filelist)
+      : filelist.concat( dir + '/' + file);
+  });
+return filelist;
 }
