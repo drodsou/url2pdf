@@ -2,6 +2,8 @@ const puppeteer = require('puppeteer-core')
 const fs = require('fs')
 const path = require('path')
 
+const packageJson = require('./package.json');
+
 
 async function main() {   // ; is important!
 
@@ -12,6 +14,10 @@ async function main() {   // ; is important!
     process.exit(-1)
   }
 
+  if (param = '--version') {
+    console.log(`url2pdf v${packageJson.version}`);
+    process.exit(0);
+  }
   // possible argument option
   // docs: https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pagepdfoptions
   pagePdfOptions = {
@@ -89,13 +95,15 @@ async function main() {   // ; is important!
     page = await browser.newPage()
     
     console.log('• pdfing', url)    
-    await page.goto(url, {waitUntil: 'networkidle2'})
+    await page.goto(url, {waitUntil: 'networkidle0'})
+    // await page.goto(url, {waitUntil: 'domcontentloaded'})
+    // await page.waitForNavigation({waitUntil: 'networkidle0'});
     
-    if (firstTime) { 
-      firstTime = false; 
-      console.log('waiting for first page')
-      await new Promise(r=>setTimeout(r,5000)); 
-    }
+    // if (firstTime) { 
+    //   firstTime = false; 
+    //   console.log('waiting for first page')
+    //   await new Promise(r=>setTimeout(r,5000)); 
+    // }
     console.log('--- goto done')    
     let pageTitle = await page.title()
     pagePdfOptions.path = path.join(outputDir, pageTitle + '.pdf')
