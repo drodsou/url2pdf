@@ -82,7 +82,7 @@ async function main() {   // ; is important!
   } )
   var page;
   var firstTime= true;
-  //let url = 'http://localhost:3000/#printReport?nome=%22JORGE%22&apelidos=%22ALVAREZ%20SEVILLA%22&nif=%2252932334L%22&modulos=%5B%22%22%5D&titulo=%22Arquitectura%20sobre%20Amazon%20Web%20Services%20(AWS%20Solutions%20Architect%20Associate)%22&dataInicio=%2226%2F02%2F2018%22&dataFin=%2209%2F03%2F2018%22&horaInicio=%2216%3A30%22&horaFin=%2220%3A30%22&dataSinatura=%2226%20de%20febreiro%20de%202018%22&tipoEdicion=%22TIPED_2%22&codEdicion=%22XTIFCT1702%22&totalHorasPrograma=40&idActividadeFormativa=%22406102%22&temario=null&report=%22Diploma%22'
+  
   for (let url of urls) {
     // -- check if line is comment, with pdf options
     // -- example valid directive: # landscape a3
