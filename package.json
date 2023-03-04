@@ -1,6 +1,6 @@
 {
   "name": "url2pdf",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "converts urls to pdf files",
   "main": "url2pdf.js",
   "bin": "url2pdf.js",
@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dist-win": "pkg -t latest-win-x64 -o ./dist/url2pdf-win64 ./package.json"
   },
-  "author": "drodsou@gmail.com",
+  "author": "@drodsou",
   "license": "ISC",
   "dependencies": {
     "puppeteer-core": "1.17.0"

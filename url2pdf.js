@@ -14,7 +14,7 @@ async function main() {   // ; is important!
     process.exit(-1)
   }
 
-  if (param = '--version') {
+  if (param === '--version') {
     console.log(`url2pdf v${packageJson.version}`);
     process.exit(0);
   }
@@ -94,7 +94,7 @@ async function main() {   // ; is important!
 
     page = await browser.newPage()
     
-    console.log('• pdfing', url)    
+    console.log('\n• pdfing', url)    
     await page.goto(url, {waitUntil: 'networkidle0'})
     // await page.goto(url, {waitUntil: 'domcontentloaded'})
     // await page.waitForNavigation({waitUntil: 'networkidle0'});
@@ -104,19 +104,19 @@ async function main() {   // ; is important!
     //   console.log('waiting for first page')
     //   await new Promise(r=>setTimeout(r,5000)); 
     // }
-    console.log('--- goto done')    
+    // console.log('--- goto done')    
     let pageTitle = await page.title()
     pagePdfOptions.path = path.join(outputDir, pageTitle + '.pdf')
     
     console.log('--- writing pdf:', pagePdfOptions.path)    
     await page.pdf(pagePdfOptions)
 
-    console.log('closing page');
+    // console.log('closing page');
     await page.close()
   }
   await browser.close()
 
-  await questionAsync('-- FINISHED. Press Enter')
+  await questionAsync('\n-- FINISHED. Press Enter')
 } // main
 
 main()
